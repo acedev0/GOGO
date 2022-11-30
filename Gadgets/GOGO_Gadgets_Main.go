@@ -800,13 +800,6 @@ func CLIPBOARD_COPY(instring string) {
 }
 
 
-// All the following are needed by GET_EXTRA_ARG
-func IS_INT(param interface{}) bool {
-
-	result := GET_VAR_TYPE(param)
-	if result == "int" { return true }
-	return false
-}
 
 func GET_VAR_TYPE(ALL_PARAMS ...interface{}) string {
 
@@ -835,24 +828,45 @@ func GET_VAR_TYPE(ALL_PARAMS ...interface{}) string {
 
 	return " ( Unknown Type ) "
 }
-func IS_STRING(param interface{}) bool {
 
-	result := GET_VAR_TYPE(param)
-	if result == "string" { return true }
+
+/*
+	= = = = = = 
+	= = = = = =  Better versions of the IS_xxx functions
+	= = = = = = 
+*/
+func IS_INT(param interface{}) bool {
+	_, found_int := param.(int) 
+	_, found_int32 := param.(int32) 
+	_, found_int64 := param.(int64)
+	
+	if found_int || found_int32 || found_int64{
+		return true
+	}
+
 	return false
 }
-func IS_FLOAT(param interface{}) bool {
+func IS_STRING(param interface{}) bool {
 
-	result := GET_VAR_TYPE(param)
-	if result == "float" { return true }
+	_, found_string := param.(string) 
+	return found_string
+}
+
+func IS_FLOAT(param interface{}) bool {
+	_, found_32 := param.(float32) 
+	_, found_64 := param.(float64) 
+	
+	if found_32 || found_64 {
+		return true
+	}
+
 	return false
 }
 
 func IS_BOOL(param interface{}) bool {
 
-	result := GET_VAR_TYPE(param)
-	if result == "bool" { return true }
-	return false
+	_, found_bool := param.(bool) 
+	return found_bool
 }
 
 /*
@@ -863,17 +877,17 @@ func IS_BOOL(param interface{}) bool {
 
 			WRITE_EMBED("ca.pem.gz", "verbose", "quiet", 55, "www.podshop.com")
 
-		2. Make the function like this:
+		2. Then write the function like this:
 
 			func WRITE_EMBED(name string, EXTRA_ARGS ...interface{}) string {
 
-				var verbose = GET_EXTRA_ARG("verbose",  EXTRA_ARGS...).(bool)		// specify verbose will set the var verbose to TRUE (cause it was found)
+				var verbose = GET_EXTRA_ARG("verbose",  EXTRA_ARGS...).(bool)		// specify verbose will set to TRUE... case verbase was passed as a parameter
 
-				var bequiet = GET_EXTRA_ARG(1, EXTRA_ARGS...)	.(bool)				// specify 1 to get the parameter specified at index 1 (which is "quiet")
+				var bequiet = GET_EXTRA_ARG(1, EXTRA_ARGS...).(string)				// parameter at index 1 is quiet.. So bequiet is set to string "quiet"
 				
-				var antcount = GET_EXTRA_ARG(2, EXTRA_ARGS...).(int)					// specify 2 to get the INT value 55 that was specified
+				var antcount = GET_EXTRA_ARG(2, EXTRA_ARGS...).(int)				// parameter at index 2 is the number 55... so antcount is set to  specify 2 to get the INT value 55 that was specified
 
-				var mydomain = GET_EXTRA_ARG(3, EXTRA_ARGS...)					// specify 3 to get the param at index 3 (which is www.podshop.com)
+				var mydomain = GET_EXTRA_ARG(3, EXTRA_ARGS...).(string)			  // and.. specify 3 to get the param at index 3 (which is www.podshop.com)
 
 
 				C.Println(" RESULT Verbose is: ", verbose)
@@ -881,22 +895,16 @@ func IS_BOOL(param interface{}) bool {
 
 				C.Println(" mydomain is: ", mydomain)
 			}
-
-
-		"encoding/json"
-
-	Function
-
 */
-
-func GET_EXTRA_ARG(key interface{}, EXTRA_ARGS ...interface{}) (bool, interface{}) {
+func GET_EXTRA_ARG(key interface{}, EXTRA_ARGS ...interface{}) interface{} {
 
 	var find_by_INDEX = false
-	var IND_2_find = -9
-
-	var keystring = ""
 	var find_by_STRING = false
 
+
+	var IND_2_find = -9
+	var KEY_VAL_2_find = ""
+	
 
 	var EMPTY_RES interface{}
 
@@ -912,76 +920,42 @@ func GET_EXTRA_ARG(key interface{}, EXTRA_ARGS ...interface{}) (bool, interface{
 		find_by_INDEX = true
 		IND_2_find = key.(int)
 
-	} else {
-
+	} else if IS_STRING(key) {
+		find_by_STRING = true
+		KEY_VAL_2_find = key.(string)
 		
-		keystring, find_by_STRING = key.(string)
-		if find_by_STRING == false {
-			R.Println(" Invalid parameter type! cant process this. Pass an INT or a string")
-			return false, EMPTY_RES
-		}
+	} else {
+		R.Println(" Invalid Key type! Must be either INT (for index) or string (for key val)")
+
+		return EMPTY_RES
 	}
 
 	// Now iterate through the args!
 	for ind, arg := range EXTRA_ARGS {
-		
-		// // Determine which kind of parameter this is
-		PARAM_string, FOUND_string := arg.(string)
-		PARAM_int, FOUND_int := arg.(int)
 
-		PARAM_int32, FOUND_int32 := arg.(int32)
-		PARAM_int64, FOUND_int64 := arg.(int64)
-
-		PARAM_float, FOUND_float := arg.(float64)
-		PARAM_bool, FOUND_bool := arg.(bool)
-
-
-		var dynamic_RESULT_VAR interface{}
-
-		
-		// // Save the actual variable value ad its type to ARG_OBJ
-		if FOUND_string {
-			dynamic_RESULT_VAR = PARAM_string
-
-		} else if FOUND_int {
-			dynamic_RESULT_VAR = PARAM_int
-
-		} else if FOUND_float {
-			dynamic_RESULT_VAR = PARAM_float
-
-		} else if FOUND_bool {
-			dynamic_RESULT_VAR = PARAM_bool
-
-		} else if FOUND_int32 {
-			dynamic_RESULT_VAR = PARAM_int32
-
-		} else if FOUND_int64 {
-			dynamic_RESULT_VAR = PARAM_int64
-		}
-
-		
-		// Now lets determine what to do with it
+		// Now if an index was passed.. and we match it.. we return the value at that index verbatim
 		if find_by_INDEX {
 			if ind == IND_2_find {
-				return true, dynamic_RESULT_VAR
+				return arg
 			}
-		} 
-		
+		} 		
+
+		// If a KEy was passed (a  string) we just return true or false
+		// example.. if someone passes verbose, we return true... which will turn on verbose mode
+		// even tho the arg value is returned, we dont use it cause its identical to KEY_VAL_2_find
 		if find_by_STRING {
-
+			PARAM_string, FOUND_string := arg.(string)
 			if FOUND_string {
-
-				if PARAM_string == keystring {
-					return true, dynamic_RESULT_VAR
+				if PARAM_string == KEY_VAL_2_find {
+					return arg
 				}
-
 			}
 		}
 	}
 
 
 	// default return value if we ever get this far
-	return false, EMPTY_RES
+	return EMPTY_RES
 
 } //end of
 
@@ -1057,43 +1031,36 @@ func SAVE_EMBED(filename string, fileOBJ interface{} ) int {
 
 func WRITE_EMBEDDED(filename string, destpath string, EXTRA_ARGS ...interface{}) {
 
-	var have_alt, alt_val = GET_EXTRA_ARG(0,  EXTRA_ARGS...)
-	var verbose, _  = GET_EXTRA_ARG("verbose", EXTRA_ARGS...)
-
-	var alt_filename = ""
-
-	if have_alt {
-		alt_filename = alt_val.(string)
-	}
-
-	// breakfix
-	if alt_filename == "verbose" {
-		alt_filename = ""
-	}
+	var alt_filename = GET_EXTRA_ARG(0,  EXTRA_ARGS...).(string)
+	var verbose_mode  = GET_EXTRA_ARG("verbose", EXTRA_ARGS...).(bool)
 
 	for _, f := range EMBED_FILES {
 
 		if f.Name == filename {
 
-			var FULL_FILE_PATH = f.Name
-
-			if destpath != "" {
-				FULL_FILE_PATH = destpath + "/" + f.Name
-			}
-
+			var FULL_FILE_PATH = destpath + "/" + f.Name
+		
 			if alt_filename != "" {
 				FULL_FILE_PATH = destpath + "/" + alt_filename
 			}
 
 
 			// Also safety remove file
-			RUN_COMMAND("rm -rf " + FULL_FILE_PATH)
-//			os.Remove(FULL_FILE_PATH)
+			err1 := os.RemoveAll(FULL_FILE_PATH)
+
+			// This will only fail if we dont have permission or file isnt there
+			if err1 != nil {
+
+				if verbose_mode {
+					R.Println(" WRITE_EMBED Error: ", err1)
+					return
+				}
+			}
 
 			 // Text written as 644
 			 if f.TYPE == "text" {
 				if err := os.WriteFile(FULL_FILE_PATH, f.DATA, 0644); err != nil {
-					if verbose {
+					if verbose_mode {
 						R.Print("ERROR! Cant save the file: ")
 						Y.Println(FULL_FILE_PATH)
 						R.Println(err)
@@ -1105,7 +1072,7 @@ func WRITE_EMBEDDED(filename string, destpath string, EXTRA_ARGS ...interface{})
 			 // Binarys are written as 755
 			 if f.TYPE == "binary" {
 				if err := os.WriteFile(FULL_FILE_PATH, f.DATA, 0755); err != nil {
-					if verbose {
+					if verbose_mode {
 						R.Print("ERROR! Cant save the file: ")
 						Y.Println(FULL_FILE_PATH)
 						R.Println(err)
@@ -1118,7 +1085,7 @@ func WRITE_EMBEDDED(filename string, destpath string, EXTRA_ARGS ...interface{})
 			 if strings.Contains(f.Name, ".gz") {
 
 				NOGZ_FILENAME := strings.Replace(FULL_FILE_PATH, ".gz", "", 1)
-				RUN_COMMAND("rm -rf " + NOGZ_FILENAME)
+				os.RemoveAll(NOGZ_FILENAME)
 
 				RUN_COMMAND("gunzip " + FULL_FILE_PATH )
 			 }
