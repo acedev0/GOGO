@@ -35,7 +35,19 @@ import (
 
 
 
+func MakeRound(num float64) int {
+	return int(num + math.Copysign(0.5, num))
+}
 
+// identical to FIX_FLOAT
+func FORCE_FLOAT_PRECISION(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(MakeRound(num*output)) / output
+}
+func FIX_FLOAT_PRECISION(num float64, precision int) float64 {
+	output := math.Pow(10, float64(precision))
+	return float64(MakeRound(num*output)) / output
+}
 
 /*
 	PERCENTAGE MAGIK
