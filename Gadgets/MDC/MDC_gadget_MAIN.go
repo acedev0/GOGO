@@ -34,7 +34,7 @@ import (
 )
 
 
-
+// Makes a floating point number rounded up and returns integer
 func MakeRound(num float64) int {
 	return int(num + math.Copysign(0.5, num))
 }
@@ -363,15 +363,6 @@ func CONVERT_FLOAT_TO_WHOLE(infloat float64, CV_PRECISION int) (int, string) {
 	return entry_NUM, entry_NUM_text
 }
 
-// Makes a floating point number rounded up and returns integer
-func MakeRound(num float64) int {
-	return int(num + math.Copysign(0.5, num))
-}
-
-func FORCE_FLOAT_PRECISION(num float64, precision int) float64 {
-	output := math.Pow(10, float64(precision))
-	return float64(MakeRound(num*output)) / output
-}
 
 
 
