@@ -960,6 +960,79 @@ func GET_EXTRA_ARG(key interface{}, EXTRA_ARGS ...interface{}) interface{} {
 } //end of
 
 
+
+
+/* 
+        Searches the passed map[string]interface{} for a string key  .. OR a value:
+        NOTE: You MUST append .(string) || .(int) || .(float64) to the return val (in what calls SearchMap)
+
+        EXAMPLE: 
+
+        foods := map[string]interface{}{
+            "bacon": "delicious",
+            "eggs": "are a protien", 
+            "checkien_cost": 1.75,
+            "eatsteak": true,
+          }
+
+
+        // Searches by specific key
+        found, val := SearchMap(foods, "eatsteak")
+
+        if found {
+            // Must cast the exact type of the value you expect
+            if val.(bool) == true {
+                C.Println(" We like to eat steak!")
+            }
+        }
+
+        // Searches by specific value
+        found, val := SearchMap(foods, "byval", 1.75)
+
+        if found {
+            if val.(float64) > 1.0 {
+                Y.Println(" Found a float greater than 1.0 !!")
+            }
+        }
+
+
+
+     */
+	 func SearchMap (m map[string]interface{}, EXTRA_ARGS ...interface{}) (bool, interface{}) {
+        
+        var search_type = GET_EXTRA_ARG(0, EXTRA_ARGS...).(string)
+
+        // If the first parameter is byval or val.. means we look for a specific value in the map
+        if search_type == "val" || search_type == "value" || search_type == "byval" {
+
+            var lookfor = GET_EXTRA_ARG(1,  EXTRA_ARGS...)
+            
+            for _, val := range m {
+
+                if val == lookfor {
+                    return true, val
+                }
+            }
+
+        /// else the default is to search for the key.. which has to be a string
+        } else {
+
+            lookfor := search_type
+            if IS_STRING(lookfor) {
+                v, found := m[lookfor]
+
+                // if found, we return this value... note.. in th line that calls search map.. you MUST append
+                if found {
+                    return true, v
+                }
+            }
+        }
+        
+        var EMPTY interface{}
+
+        return false, EMPTY
+    } 
+
 /*
 
 	The below items are for EMBED support.. 
