@@ -3,8 +3,8 @@ module github.com/acedev0/GOGO/Gadgets/MDC
 go 1.19
 
 require (
-	github.com/acedev0/GOGO/Gadgets v0.0.0-20221125211854-987d84e9dee7
-	github.com/acedev0/GOGO/Gadgets/StringOPS v0.0.0-20221125211854-987d84e9dee7
+	github.com/acedev0/GOGO/Gadgets v0.0.0-20221130235243-d7910476f9f9
+	github.com/acedev0/GOGO/Gadgets/StringOPS v0.0.0-20221130235243-d7910476f9f9
 )
 
 require (

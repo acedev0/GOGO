@@ -2,7 +2,7 @@ module github.com/acedev0/GOGO/Gadgets/FileOPS
 
 go 1.19
 
-require github.com/acedev0/GOGO/Gadgets v0.0.0-20221125212037-c4226a7cadda
+require github.com/acedev0/GOGO/Gadgets v0.0.0-20221130235243-d7910476f9f9
 
 require (
 	github.com/atotto/clipboard v0.1.4 // indirect

@@ -109,7 +109,7 @@ func SAVE_Struct_2_DISK(dest_file string, v interface{}, EXTRA_ARGS ...interface
 	// lock.Lock()
 	// defer lock.Unlock()	
 
-	var have_verbose, _  = GET_EXTRA_ARG("verbose", EXTRA_ARGS...)
+	var have_verbose = GET_EXTRA_ARG("verbose", EXTRA_ARGS...).(bool)
 
 	var verbose = false
 
