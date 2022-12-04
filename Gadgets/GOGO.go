@@ -17,33 +17,30 @@ package CUSTOM_GO_MODULE
 
 import (
 
-	// = = = = = Native Libraries
-		"flag"		
-		"math"
-		"math/rand"
-		"os"
-		"os/exec"
-		"runtime"
-		"strconv"
-		"strings"
-		"time"
-		"bufio"
-		"unicode/utf8"
-		"net/http"
-		"io/ioutil"
-		"encoding/json"
-		"crypto/md5"
-		"encoding/hex"		
-		"io"
+	"flag"		
+	"math"
+	"math/rand"
+	"os"
+	"os/exec"
+	"runtime"
+	"strconv"
+	"strings"
+	"time"
+	"bufio"
+	"unicode/utf8"
+	"net/http"
+	"io/ioutil"
+	"encoding/json"
+	"crypto/md5"
+	"encoding/hex"		
+	"io"
 
-
-	// = = = = = 3rd Party Libraries
-
-		"github.com/atotto/clipboard"
-		"github.com/briandowns/spinner"
-		"github.com/dustin/go-humanize"
-		"github.com/fatih/color"
-		mini "github.com/janeczku/go-spinner"
+	"github.com/atotto/clipboard"
+	"github.com/briandowns/spinner"
+	"github.com/dustin/go-humanize"
+	"github.com/fatih/color"
+	mini "github.com/janeczku/go-spinner"
+	"github.com/TylerBrock/colorjson"
 )
 
 /*
@@ -1330,7 +1327,7 @@ func GET_CURRENT_TIME(EXTRA_ARGS ...string) (string, time.Time) {
 
 
 func PRETTY_STRUCT_json(input interface{}) string {
-	byte_json, _ := json.MarshalIndent(input, "", "  ")
+	byte_json, _ := json.MarshalIndent(input, "", "\t")  // Marshall takes a struct and makes it into JSON
 
 	result := string(byte_json)
 
@@ -1370,6 +1367,34 @@ func SHOW_STRUCT(ALL_PARAMS ...interface{}) {
 		Y.Println(PRETTY_STRUCT_json(tmpSTRUCT))
 	}
 }
+
+
+
+// This takes any struct and returns "regular" json and pretty colorized JSON
+func GEN_PRETTY_JSON(tmpOBJ interface{}) (string, string) {
+
+	// tmp_JSON_OBJ, err := json.Marshal(tmpOBJ)  // Marshall takes a struct and makes it into JSON
+	tmp_JSON_OBJ, err := json.MarshalIndent(tmpOBJ, "", "\t")  // Marshall takes a struct and makes it into JSON
+	
+	if err != nil {
+		R.Println(" error in the GEN_PRETTY_JSON ")
+		W.Println(err)
+		return "", ""
+	}
+	
+	var obj map[string]interface{}
+	json.Unmarshal(tmp_JSON_OBJ, &obj)		// Unmarshall takes json and puts it in a struct // marshall does the opposite
+
+	// Marshall the Colorized JSON, Make a custom formatter with indent set
+	f := colorjson.NewFormatter()
+	f.Indent = 4
+	colorTEMP, _ := f.Marshal(obj)
+	pretty_color_JSON := string(colorTEMP)
+	regular_JSON := string(tmp_JSON_OBJ)
+
+	return regular_JSON, pretty_color_JSON
+
+} //end of func
 
 
 // Shows the amount of time a program ran (and start and end time)

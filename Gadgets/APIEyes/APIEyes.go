@@ -17,25 +17,21 @@ package CUSTOM_GO_MODULE
 
 import (
 
-	// = = = = = Native Libraries
-		"flag"
-		"io/ioutil"
-		"net/http"
-		"net/url"
-		"os"
-		"strings"
-		"unicode"
-		"context"
-		"time"
+	"flag"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"os"
+	"strings"
+	"unicode"
+	"context"
+	"time"
+	"encoding/json"
 
-	// = = = = = CUSTOM Libraries
 	. "github.com/acedev0/GOGO/Gadgets"
 	. "github.com/acedev0/GOGO/Gadgets/StringOPS"
 
-
-
-	// = = = = = 3rd Party Libraries
-		"github.com/buger/jsonparser"
+	"github.com/buger/jsonparser"
 
 )
 
@@ -53,16 +49,61 @@ var SSL_ENABLE_FLAG     = false	// If set to true.. we listen in SSL mode.. mean
 var SSL_CERT_PEM_FILE   = ""		// Full path to wherever this CERT/ pem file is			(this is just example: /opt/SSL_CERTS/biolab_COMBINED.pem  )
 var SSL_KEY_FILE        = ""		// Full path to wherever the KEY file of this cert is (this is just example: /opt/SSL_CERTS/biolab_ALPHA-SSL.key )
 
-
-
 type HEADER_OBJ struct {
 	NAME    string
 	VALUE   string
 }
 
 
+/*
+
+	If you want the JSON tha tis renndered to show up with a different name... do this:
+
+		TOTAL_ORDERS 	int			`json:"TotalOrders"`
+
+	or if you DONT want the struct member to show up in the json at ALL.. use this:
+
+		QUERY_DATE 		time.Time	`json:"-"`
+
+	NOTE: For AWS SDK v2, 
+		If you are inserting into DynomoDB... you'll need to do this (its the only way Dynamo recognizes the field)
+		Dynamo always uses LOWER case by the way
+
+		TOTAL_ORDERS 	int			`dynamodbav:"total_orders"`
 
 
+Access dynomo with AWS SDK like this:
+	import  (
+		“github.com/aws/aws-sdk-go-v2/aws”
+        “github.com/aws/aws-sdk-go-v2/config”
+        “github.com/aws/aws-sdk-go-v2/service/dynamodb”
+        “github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue”		
+	)
+*/
+
+
+type API_JSON_OBJ struct {
+	DATA 		[]interface{}		`json:"data"`
+}
+
+// This makes "API" json you can retrieve from jquery or VUEjs
+func MAKE_API_JSON(tmpOBJ interface{}) string {
+
+
+
+	var a API_JSON_OBJ
+	a.DATA = append(a.DATA, tmpOBJ)
+
+	JSON_RESULT, err := json.MarshalIndent(a, "", "\t")  // Marshall takes a struct and makes it into JSON
+	
+	if err != nil {
+		R.Println(" error in the MAKE_API_JSON ")
+		W.Println(err)
+		return ""
+	}	
+
+	return string(JSON_RESULT)
+}
 
 
 
