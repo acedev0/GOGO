@@ -3,8 +3,8 @@ module github.com/acedev0/GOGO/Gadgets/APIce
 go 1.19
 
 require (
-	github.com/acedev0/GOGO/Gadgets v0.0.0-20221204070815-948eb860793c
-	github.com/acedev0/GOGO/Gadgets/StringOPS v0.0.0-20221204070815-948eb860793c
+	github.com/acedev0/GOGO/Gadgets v0.0.0-20221217211523-f9d1be20044d
+	github.com/acedev0/GOGO/Gadgets/StringOPS v0.0.0-20221217211523-f9d1be20044d
 	github.com/buger/jsonparser v1.1.1
 )
 
