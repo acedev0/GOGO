@@ -35,10 +35,13 @@ import (
 	"encoding/hex"		
 	"io"
 
+	"github.com/google/uuid"
+
 	"github.com/atotto/clipboard"
 	"github.com/briandowns/spinner"
 	"github.com/dustin/go-humanize"
 	"github.com/fatih/color"
+
 	mini "github.com/janeczku/go-spinner"
 	"github.com/TylerBrock/colorjson"
 )
@@ -199,6 +202,14 @@ var DEFAULT_INT = -999999999
 	
 	 
 */
+
+
+
+func NEW_UUID() string {
+
+	return uuid.New().String()
+
+}
 
 
 func STRING_to_FLOAT(input string) float64 {
