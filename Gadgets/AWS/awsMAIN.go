@@ -37,7 +37,7 @@ func AWS_INIT() {
         return
     }
 
-    C.Println(" **| Connecting to AWS ")
+    C.Println(" - -| Connecting to AWS ")
 
      // Using the SDK's default configuration, loading additional config
     // and credentials values from the environment variables, shared
@@ -150,7 +150,8 @@ func DYN_CreateTable(tableName string) {
 
 func DYN_InsertItem(tableName string, item interface{} )  {
 
-	SHOW_BOX("**| About to Perform Dynamo INSERT on:", "|yellow|" + tableName )
+    C.Print(" - -| About to Dynamo INSERT on: ")
+    Y.Println(tableName)
 	
 	data, err := attributevalue.MarshalMap(item)
 
