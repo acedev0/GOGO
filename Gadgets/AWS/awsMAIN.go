@@ -98,7 +98,8 @@ func DYN_CreateTable(tableName string) {
 
 	C.Print(" - -| Trying to Create Dynamo Table: ")
 	Y.Println(tableName)
-	C.Println(" Remember PRimary Key is always: ", PRIMARY_KEY_NAME)
+	C.Print("    Remember PRimary Key is always: ")
+    Y.Println(PRIMARY_KEY_NAME)
 
     _, err := DYNAMO_SVC.CreateTable(context.TODO(), &dynamodb.CreateTableInput{ 
         TableName:   aws.String(tableName),
