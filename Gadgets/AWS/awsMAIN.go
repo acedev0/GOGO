@@ -169,5 +169,6 @@ func DYN_InsertItem(tableName string, item interface{} )  {
 		M.Println("DYN Insert error", err, err.Error())
         return		
 	}
-	G.Println(" DYN Insert Success")
+
+	G.Println(" - -| DYN Insert Success")
 }
