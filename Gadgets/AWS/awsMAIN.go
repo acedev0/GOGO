@@ -98,7 +98,7 @@ func DYN_CreateTable(tableName string) {
 
 	C.Print(" - -| Trying to Create Dynamo Table: ")
 	Y.Println(tableName)
-	C.Print("    Remember PRimary Key is always: ")
+	C.Print("      Remember Primary Key is always: ")
     Y.Println(PRIMARY_KEY_NAME)
 
     _, err := DYNAMO_SVC.CreateTable(context.TODO(), &dynamodb.CreateTableInput{ 
@@ -150,7 +150,7 @@ func DYN_CreateTable(tableName string) {
 
 func DYN_InsertItem(tableName string, item interface{} )  {
 
-	SHOW_BOX("**| About to Perform Dynamo INSERT on:", "|white|" + tableName )
+	SHOW_BOX("**| About to Perform Dynamo INSERT on:", "|yellow|" + tableName )
 	
 	data, err := attributevalue.MarshalMap(item)
 
