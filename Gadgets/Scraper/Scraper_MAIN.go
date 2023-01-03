@@ -28,6 +28,7 @@ import (
 
 	// = = = NATIVE Libraries / Standard Library Deps
 		"net/http" // Needed for the functions that send JSON back and forth
+		"strings"
 
 	//2. = = = CUSTOM Libraries
 		. "github.com/acedev0/GOGO/Gadgets"
@@ -55,39 +56,41 @@ var DEFAULT_USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleW
 var S_RETRY_MAX = 10
 var S_RETRY_SLEEP = 15
 
-func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
-
-	URL := ""
+func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 
 	// Just blank Goquery Doc
 	var EMPTY_GOQUERY_doc *goquery.Document	
-
-	// Defaults to CHrome
-	USER_AGENT := DEFAULT_USER_AGENT
 	
-	//1. Get tvars passed
-	for x, VAL := range EXTRA_ARGS {
+	var IGNORE_REDIRECTS = false
+	var VERBOSE = false
 
-		//1b. First Param is URL
-		if x == 0 {
-			URL = VAL
+	//1. Get tvars passed
+	for _, VAL := range EXTRA_ARGS {
+
+		if strings.Contains(VAL, "redir")  {
+			IGNORE_REDIRECTS = true
 			continue
 		}
-		//1c. Next param is user agent
-		if x == 1 {
-			USER_AGENT = VAL
+
+		if strings.Contains(VAL, "verbose") {
+			VERBOSE = true
 			continue
 		}
+
 	} //end of ARGS
 
 
-	W.Println("")
-	C.Println(" - - - - - - - - - - - - - - - - - - - - ")
-	C.Println(" *** Calling SCRAPE_TOOL")
-	  C.Print(" *** URL: ")
-	  Y.Println(URL)
-	C.Println(" - - - - - - - - - - - - - - - - - - - - ")
-	W.Println("")
+	if VERBOSE {
+
+		W.Println("")
+		C.Println(" - - - - - - - - - - - - - - - - - - - - ")
+		C.Println(" *** Calling SCRAPE_TOOL")
+		C.Print(" *** URL: ")
+		Y.Println(URL)
+		C.Println(" - - - - - - - - - - - - - - - - - - - - ")
+		W.Println("")
+
+	}
 
 
 	
@@ -108,20 +111,24 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 		client := &http.Client{}
 
 
-		var doexit = false
-		client = &http.Client{
-			CheckRedirect: func(req *http.Request, via []*http.Request) error {
 
-				R.Println(" Error! Redirect detected: ", http.ErrUseLastResponse)
-				doexit = true
-				return http.ErrUseLastResponse
-			},
+		if IGNORE_REDIRECTS {
+
+			var doexit = false
+			client = &http.Client{
+				CheckRedirect: func(req *http.Request, via []*http.Request) error {
+
+					R.Println(" Error! Redirect detected: ", http.ErrUseLastResponse)
+					doexit = true
+					return http.ErrUseLastResponse
+				},
+			}
+
+			if doexit {
+				return true, EMPTY_GOQUERY_doc, ""
+			}
+
 		}
-
-		if doexit {
-			return true, EMPTY_GOQUERY_doc, ""
-		}
-
 
 		req, err := http.NewRequest("GET", URL, nil)
 		if err != nil {
@@ -130,10 +137,11 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 			Y.Println(err)
 			R.Println(" *** ")
 			R.Println("")	
+			return true, EMPTY_GOQUERY_doc, ""
 		}
 
 		//3. Next, Set the User Agent the client will use during the HTTP Pull
-		req.Header.Set("User-Agent", USER_AGENT)
+		req.Header.Set("User-Agent", DEFAULT_USER_AGENT)
 
 		// Try setting the Connection Close header if you need it.. This forces HTTP protocol to "close quick" as it is short lived
 		//req.Header.Set("Connection", "close")
@@ -148,6 +156,7 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 			Y.Println(err2)
 			R.Println(" *** ")
 			R.Println("")
+			return true, EMPTY_GOQUERY_doc, ""
 		}
 
 		//5. Now finally, lets create our DOM object using goquery and empty the reader into the DOM object
@@ -158,6 +167,7 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 			Y.Println(err3)
 			R.Println(" *** ")
 			R.Println("")
+			return true, EMPTY_GOQUERY_doc, ""
 		}	
 
 		//6. Error Hanlding
@@ -203,13 +213,13 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 } //end of func
 
 // Alias for SCRAPE_TOOL
-func SCRAPER(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
-	return SCRAPE_TOOL(EXTRA_ARGS...)
+func SCRAPER(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
+	return SCRAPE_TOOL(URL, EXTRA_ARGS...)
 } //end of 
 
 // Alias for SCRAPE_TOOL
-func SCRAPER_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
-	return SCRAPE_TOOL(EXTRA_ARGS...)
+func SCRAPER_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
+	return SCRAPE_TOOL(URL, EXTRA_ARGS...)
 }
 
 
