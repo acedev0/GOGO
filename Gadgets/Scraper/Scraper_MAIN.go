@@ -59,6 +59,9 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 
 	URL := ""
 
+	// Just blank Goquery Doc
+	var EMPTY_GOQUERY_doc *goquery.Document	
+
 	// Defaults to CHrome
 	USER_AGENT := DEFAULT_USER_AGENT
 	
@@ -103,6 +106,23 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 
 		//2. Now generate a NewRequest Object with http
 		client := &http.Client{}
+
+
+		var doexit = false
+		client = &http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+
+				R.Println(" Error! Redirect detected: ", http.ErrUseLastResponse)
+				doexit = true
+				return http.ErrUseLastResponse
+			},
+		}
+
+		if doexit {
+			return true, EMPTY_GOQUERY_doc, ""
+		}
+
+
 		req, err := http.NewRequest("GET", URL, nil)
 		if err != nil {
 			R.Println(" *** ")
@@ -165,8 +185,7 @@ func SCRAPE_TOOL(EXTRA_ARGS ...string) (bool, *goquery.Document, string) {
 
 	} //end of for
 
-	// Just blank Goquery Doc
-	var EMPTY_GOQUERY_doc *goquery.Document
+
 
 	if SUCCESS_FLAG == false {
 		R.Println("")
