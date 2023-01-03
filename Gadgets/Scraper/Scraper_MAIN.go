@@ -117,14 +117,13 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			var doexit = false
 			client = &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-
-					R.Println(" Error! Redirect detected: ", http.ErrUseLastResponse)
 					doexit = true
 					return http.ErrUseLastResponse
 				},
 			}
 
 			if doexit {
+				R.Println(" Error AGAIN! Redirect detected: ", http.ErrUseLastResponse)
 				return false, EMPTY_GOQUERY_doc, ""
 			}
 
