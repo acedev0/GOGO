@@ -103,6 +103,8 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 	var doc *goquery.Document
 	var err3 error
 
+
+	var DO_HARD_EXIT = false
 	for i := 1; i < S_RETRY_MAX; i++ {
 
 		SUCCESS_FLAG = true
@@ -112,17 +114,19 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 
 
 
+		
 		if IGNORE_REDIRECTS {
 
-			var doexit = false
+			
 			client = &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
-					doexit = true
+					DO_HARD_EXIT = true
+					R.Println(" Error AGAIN! Redirect detected: ", http.ErrUseLastResponse)
 					return http.ErrUseLastResponse
 				},
 			}
 
-			if doexit {
+			if DO_HARD_EXIT {				
 				R.Println(" Error AGAIN! Redirect detected: ", http.ErrUseLastResponse)
 				return false, EMPTY_GOQUERY_doc, ""
 			}
@@ -195,6 +199,10 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 	} //end of for
 
 
+	if DO_HARD_EXIT {				
+		R.Println(" Error AGAIN! Redirect detected: ", http.ErrUseLastResponse)
+		return false, EMPTY_GOQUERY_doc, ""
+	}	
 
 	if SUCCESS_FLAG == false {
 		R.Println("")
