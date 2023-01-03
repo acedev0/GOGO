@@ -125,7 +125,7 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			}
 
 			if doexit {
-				return true, EMPTY_GOQUERY_doc, ""
+				return false, EMPTY_GOQUERY_doc, ""
 			}
 
 		}
@@ -137,7 +137,7 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			Y.Println(err)
 			R.Println(" *** ")
 			R.Println("")	
-			return true, EMPTY_GOQUERY_doc, ""
+			return false, EMPTY_GOQUERY_doc, ""
 		}
 
 		//3. Next, Set the User Agent the client will use during the HTTP Pull
@@ -156,7 +156,7 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			Y.Println(err2)
 			R.Println(" *** ")
 			R.Println("")
-			return true, EMPTY_GOQUERY_doc, ""
+			return false, EMPTY_GOQUERY_doc, ""
 		}
 
 		//5. Now finally, lets create our DOM object using goquery and empty the reader into the DOM object
@@ -167,7 +167,7 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			Y.Println(err3)
 			R.Println(" *** ")
 			R.Println("")
-			return true, EMPTY_GOQUERY_doc, ""
+			return false, EMPTY_GOQUERY_doc, ""
 		}	
 
 		//6. Error Hanlding
