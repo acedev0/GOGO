@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
     "github.com/aws/aws-sdk-go-v2/service/dynamodb"    
     "github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"     
+    "github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
     "github.com/aws/aws-sdk-go-v2/service/dynamodb/types"   
 
 
@@ -146,6 +147,37 @@ func DYN_CreateTable(tableName string) {
     }
 }
 
+
+func DYN_FindItem(tableName string, keyname string, keyval string) (int, dynamodb.ScanOutput) {
+
+
+	var EMPTY dynamodb.ScanOutput
+
+	expr, err := expression.NewBuilder().WithFilter(
+        expression.And(
+            expression.AttributeNotExists(expression.Name("deletedAt")),
+            expression.Contains(expression.Name(keyname), keyval),
+        ),
+    ).Build()
+    if err != nil {
+		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
+        return 0, EMPTY
+    }
+
+    out, err := DYNAMO_SVC.Scan(context.TODO(), &dynamodb.ScanInput{
+        TableName:                 aws.String(tableName),
+        FilterExpression:          expr.Filter(),
+        ExpressionAttributeNames:  expr.Names(),
+        ExpressionAttributeValues: expr.Values(),
+    })
+	
+    if err != nil {
+		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
+		return 0, EMPTY
+    }
+
+	return len(out.Items), *out
+}
 
 
 func DYN_InsertItem(tableName string, item interface{} )  {
