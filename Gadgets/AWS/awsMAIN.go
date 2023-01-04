@@ -148,6 +148,21 @@ func DYN_CreateTable(tableName string) {
 }
 
 
+
+	/*  
+		TO EXTRACT AN ACTUAL DYNAMO ITEM from FIND
+
+		total, OBJ := DYN_FindItem(DYNAMO_TABLE, "GAME_ID", gameid)
+		
+		var O []GAME_OBJ
+
+		err2 := attributevalue.UnmarshalListOfMaps(OBJ.Items, &O)
+		if err2 != nil {
+			M.Println(" Error with DYN_FIND Unmarshal!", err2.Error())
+		}
+	*/	 
+
+    
 func DYN_FindItem(tableName string, keyname string, keyval string) (int, dynamodb.ScanOutput) {
 
 
