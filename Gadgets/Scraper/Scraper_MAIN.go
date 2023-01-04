@@ -124,7 +124,7 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			client = &http.Client{
 				CheckRedirect: func(req *http.Request, via []*http.Request) error {
 					DO_HARD_EXIT = true
-					R.Println(" Error! Have Redirect: ", http.ErrUseLastResponse)
+//					R.Println(" Error! Have Redirect: ", http.ErrUseLastResponse)
 					return http.ErrUseLastResponse
 				},
 			}
