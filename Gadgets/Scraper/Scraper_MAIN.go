@@ -63,6 +63,8 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 	
 	var IGNORE_REDIRECTS = false
 	var VERBOSE = false
+	var USE_CLOSE_QUICK = false
+
 
 	//1. Get tvars passed
 	for _, VAL := range EXTRA_ARGS {
@@ -76,6 +78,11 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 			VERBOSE = true
 			continue
 		}
+
+		if strings.Contains(VAL, "quick") {
+			VERBOSE = true
+			continue
+		}		
 
 	} //end of ARGS
 
@@ -143,7 +150,9 @@ func SCRAPE_TOOL(URL string, EXTRA_ARGS ...string) (bool, *goquery.Document, str
 		req.Header.Set("User-Agent", DEFAULT_USER_AGENT)
 
 		// Try setting the Connection Close header if you need it.. This forces HTTP protocol to "close quick" as it is short lived
-		//req.Header.Set("Connection", "close")
+		if USE_CLOSE_QUICK {
+			req.Header.Set("Connection", "close")
+		}
 
 		//3b. Now.. actually do the Http Client Request (with the header)
 		res, err2 := client.Do(req)
