@@ -1,7 +1,7 @@
 github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2 h1:ZBbLwSJqkHBuFDA6DUhhse0IGJ7T5bemHyNILUjvOq4=
 github.com/TylerBrock/colorjson v0.0.0-20200706003622-8a50f05110d2/go.mod h1:VSw57q4QFiWDbRnjdX8Cb3Ow0SFncRw+bA/ofY6Q83w=
-github.com/acedev0/GOGO/Gadgets v0.0.0-20230104065101-75ee227fe43f h1:bQqrahKrWtnOWTXKEAKu9c57LH9aTgSLhX4yCLnI9kk=
-github.com/acedev0/GOGO/Gadgets v0.0.0-20230104065101-75ee227fe43f/go.mod h1:OuTgsPYElUq1KcAFBoi91X/L/uinlgPiU1CERK5zrKA=
+github.com/acedev0/GOGO/Gadgets v0.0.0-20230104070802-9ce947d51c16 h1:6KFBMIHufQ8Bmyu6gqVzWGwPdqU919gGUe+5mbXN/PA=
+github.com/acedev0/GOGO/Gadgets v0.0.0-20230104070802-9ce947d51c16/go.mod h1:OuTgsPYElUq1KcAFBoi91X/L/uinlgPiU1CERK5zrKA=
 github.com/atotto/clipboard v0.1.4 h1:EH0zSVneZPSuFR11BlR9YppQTVDbh5+16AmcJi4g1z4=
 github.com/atotto/clipboard v0.1.4/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/aws/aws-sdk-go-v2 v1.17.3 h1:shN7NlnVzvDUgPQ+1rLMSxY8OWRNDRYtiqe0p/PgrhY=

@@ -163,7 +163,8 @@ func DYN_CreateTable(tableName string) {
 	*/	 
 
     
-func DYN_FindItem(tableName string, keyname string, keyval string) (int, dynamodb.ScanOutput) {
+// Returns True (if found) total ITEMS found, and ARRAY WITH those items
+func DYN_FindItem(tableName string, keyname string, keyval string) (bool, int, dynamodb.ScanOutput) {
 
 
 	var EMPTY dynamodb.ScanOutput
@@ -176,7 +177,7 @@ func DYN_FindItem(tableName string, keyname string, keyval string) (int, dynamod
     ).Build()
     if err != nil {
 		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
-        return 0, EMPTY
+        return false, 0, EMPTY
     }
 
     out, err := DYNAMO_SVC.Scan(context.TODO(), &dynamodb.ScanInput{
@@ -188,10 +189,10 @@ func DYN_FindItem(tableName string, keyname string, keyval string) (int, dynamod
 	
     if err != nil {
 		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
-		return 0, EMPTY
+		return false, 0, EMPTY
     }
 
-	return len(out.Items), *out
+	return true, len(out.Items), *out
 }
 
 
