@@ -102,6 +102,9 @@ func DYN_CreateTable(tableName string) {
 	C.Print("      Remember Primary Key is always: ")
     Y.Println(PRIMARY_KEY_NAME)
 
+
+    
+
     _, err := DYNAMO_SVC.CreateTable(context.TODO(), &dynamodb.CreateTableInput{ 
         TableName:   aws.String(tableName),
         BillingMode: types.BillingModePayPerRequest,
