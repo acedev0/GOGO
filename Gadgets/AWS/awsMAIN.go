@@ -149,7 +149,35 @@ func DYN_CreateTable(tableName string) {
 
 
 
-	/*  
+
+
+func DNY_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
+
+
+	var EMPTY dynamodb.ScanOutput
+
+    Y.Print(" - -| Pulling ALL Records from: ")
+    W.Println(tableName)
+
+    out, err := DYNAMO_SVC.Scan(context.TODO(), &dynamodb.ScanInput{
+        TableName:                 aws.String(tableName),
+    })
+	
+    if err != nil {
+		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
+		return false, 0, EMPTY
+    }
+
+    var found = false
+    if len(out.Items) > 0 {
+        found = true
+    }
+
+	return found, len(out.Items), *out
+}
+
+
+/*  
 		TO EXTRACT AN ACTUAL DYNAMO ITEM from FIND
 
 		total, OBJ := DYN_FindItem(DYNAMO_TABLE, "GAME_ID", gameid)
@@ -160,10 +188,9 @@ func DYN_CreateTable(tableName string) {
 		if err2 != nil {
 			M.Println(" Error with DYN_FIND Unmarshal!", err2.Error())
 		}
-	*/	 
-
     
-// Returns True (if found) total ITEMS found, and ARRAY WITH those items
+      Returns True (if found) total ITEMS found, and ARRAY WITH those items
+*/
 func DYN_FindItem(tableName string, keyname string, keyval string) (bool, int, dynamodb.ScanOutput) {
 
 
@@ -192,7 +219,12 @@ func DYN_FindItem(tableName string, keyname string, keyval string) (bool, int, d
 		return false, 0, EMPTY
     }
 
-	return true, len(out.Items), *out
+    var found = false
+    if len(out.Items) > 0 {
+        found = true
+    }
+
+	return found, len(out.Items), *out
 }
 
 

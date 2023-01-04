@@ -3,7 +3,7 @@ module github.com/acedev0/GOGO/Gadgets/AWS
 go 1.19
 
 require (
-	github.com/acedev0/GOGO/Gadgets v0.0.0-20230104070802-9ce947d51c16
+	github.com/acedev0/GOGO/Gadgets v0.0.0-20230104223754-b2fa6b5a8d48
 	github.com/aws/aws-sdk-go-v2 v1.17.3
 	github.com/aws/aws-sdk-go-v2/config v1.18.7
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.8
