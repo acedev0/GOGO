@@ -151,8 +151,7 @@ func DYN_CreateTable(tableName string) {
 
 
 
-func DNY_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
-
+func DYN_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
 
 	var EMPTY dynamodb.ScanOutput
 
@@ -164,7 +163,7 @@ func DNY_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
     })
 	
     if err != nil {
-		M.Println(" --| FIND Error: ", err, err.Error())	//, err.Error())
+		M.Println(" --| Error in DYN_GetAll: ", err, err.Error())	//, err.Error())
 		return false, 0, EMPTY
     }
 
