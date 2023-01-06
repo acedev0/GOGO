@@ -97,7 +97,8 @@ func DYN_CreateTable(tableName string) {
 
 	var PRIMARY_KEY_NAME = "id"
 
-	C.Print(" - -| Trying to Create Dynamo Table: ")
+    C.Println("")
+	C.Print(" - -| DYN: Trying to Create Dynamo Table: ")
 	Y.Println(tableName)
 	C.Print("      Remember Primary Key is always: ")
     Y.Println(PRIMARY_KEY_NAME)
@@ -127,12 +128,12 @@ func DYN_CreateTable(tableName string) {
         },		
     })
     if err != nil {
-		M.Println(" Cant Create Table: ", err)
+		M.Println(" DYN: Cant Create Table: ", err)
 		return
     }
 
 	// Now wait for table creation
-	Y.Println(" - -| Now Waiting for Table to be created...")
+	Y.Println(" - -| DYN: Now Waiting for Table to be created...")
 
 	w := dynamodb.NewTableExistsWaiter(DYNAMO_SVC)
     err = w.Wait(context.TODO(),
@@ -145,9 +146,11 @@ func DYN_CreateTable(tableName string) {
             o.MinDelay = 5 * time.Second
         })
     if err != nil {
-		M.Print(" - -| Timed out waiting for table! ")
+		M.Print(" - -| DYN: Timed out waiting for table! ")
 		Y.Println(err)
     }
+
+    Y.Println("")
 }
 
 
