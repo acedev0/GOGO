@@ -181,6 +181,108 @@ func DYN_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
 	return found, len(out.Items), *out
 }
 
+func TEST_DYN_CreateTable(tableName string, SEC_INDEX string) {
+
+	var PRIMARY_KEY_NAME = "ID"
+
+	C.Print(" - -| Trying to Create Dynamo Table: ")
+	Y.Println(tableName)
+	C.Print("      Remember Primary Key is always: ")
+    Y.Println(PRIMARY_KEY_NAME)
+
+    var secINDEXES = []types.LocalSecondaryIndex {
+        {
+            IndexName: aws.String(SEC_INDEX),
+            KeySchema: []types.KeySchemaElement{
+                {
+                    AttributeName: aws.String(PRIMARY_KEY_NAME),
+                    KeyType:       types.KeyTypeHash,
+                },
+                {
+                    AttributeName: aws.String(SEC_INDEX),
+                    KeyType: types.KeyTypeRange,
+                },
+            },
+            Projection: &types.Projection{
+                ProjectionType: types.ProjectionTypeKeysOnly, // "ALL",
+                //NonKeyAttributes: []string{"GAME_ID"},
+            },
+        },
+    }
+
+    _, err := DYNAMO_SVC.CreateTable(context.TODO(), &dynamodb.CreateTableInput{ 
+        TableName:   aws.String(tableName),
+        BillingMode: types.BillingModePayPerRequest,
+
+        AttributeDefinitions: []types.AttributeDefinition{
+            {
+                AttributeName: aws.String(PRIMARY_KEY_NAME),
+                AttributeType: types.ScalarAttributeTypeS,
+            },
+            {
+                AttributeName: aws.String(SEC_INDEX),
+                AttributeType: types.ScalarAttributeTypeS,
+            },            
+        },	        
+        KeySchema: []types.KeySchemaElement{
+            {
+                AttributeName: aws.String(PRIMARY_KEY_NAME),
+                KeyType:       types.KeyTypeHash,
+            },
+            {
+                AttributeName: aws.String(SEC_INDEX),
+                KeyType: types.KeyTypeRange,
+            },
+        },
+
+      
+        //KeyType: aws.String("RANGE"),	
+
+        LocalSecondaryIndexes: secINDEXES,
+    })
+    if err != nil {
+		M.Println(" Cant Create Table: ", err)
+		return
+    }
+
+	// Now wait for table creation
+	Y.Println(" - -| Now Waiting for Table to be created...")
+
+	w := dynamodb.NewTableExistsWaiter(DYNAMO_SVC)
+    err = w.Wait(context.TODO(),
+        &dynamodb.DescribeTableInput{
+            TableName: aws.String(tableName),
+        },
+        2*time.Minute,
+        func(o *dynamodb.TableExistsWaiterOptions) {
+            o.MaxDelay = 5 * time.Second
+            o.MinDelay = 5 * time.Second
+        })
+    if err != nil {
+		M.Print(" - -| Timed out waiting for table! ")
+		Y.Println(err)
+    }
+}
+
+
+
+//func TEST_GetAll(tableName string) (bool, int, dynamodb.ScanOutput) {
+func TEST_GetAll(tableName string) {
+
+    input := &dynamodb.DescribeTableInput{
+		TableName: &tableName,
+	}
+
+	out, err := GetTableInfo(context.TODO(), DYNAMO_SVC, input)
+	if err != nil {
+		M.Println(" --| Error in DYN_GetAll: ", err, err.Error())	//, err.Error())
+	}    
+
+    
+    SHOW_STRUCT(out)
+    
+}
+
 
 /*  
 		TO EXTRACT AN ACTUAL DYNAMO ITEM from FIND
